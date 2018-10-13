@@ -4,10 +4,12 @@ import HelloWorld from '@/components/HelloWorld'
 import Admin from '@/components/Admin'
 import Setting from '@/components/Setting'
 import ShopOwner from '@/components/ShopOwner'
+import Goods from '@/components/Goods'
 
 Vue.use(Router)
 
 export default new Router({
+  // mode: 'history',
   routes: [
     {
       path: '/',
@@ -18,7 +20,16 @@ export default new Router({
       path: '/admin',
       name: 'Admin',
       component: Admin,
+      redirect: '/admin/goods',
       children: [{
+        path: 'goods',
+        name: 'Goods',
+        component: Goods,
+        meta: {
+          title: '商品管理'
+        }
+      },
+      {
         path: 'setting',
         name: 'Setting',
         component: Setting,

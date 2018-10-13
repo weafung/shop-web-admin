@@ -9,6 +9,11 @@ export default {
 </script>
 
 <style>
+html, body, #app {
+  height: 100%;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
 #app {
   font-family: 'PingFang SC', 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
