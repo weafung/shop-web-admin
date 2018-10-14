@@ -5,6 +5,7 @@ import Admin from '@/components/Admin'
 import Setting from '@/components/Setting'
 import ShopOwner from '@/components/ShopOwner'
 import Goods from '@/components/Goods'
+import Login from '@/components/Login'
 
 Vue.use(Router)
 
@@ -15,6 +16,11 @@ export default new Router({
       path: '/',
       name: 'HelloWorld',
       component: HelloWorld
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
     },
     {
       path: '/admin',
