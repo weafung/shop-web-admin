@@ -9,6 +9,8 @@ import Login from '@/components/Login'
 import Forbidden from '@/components/error/403'
 import NotFound from '@/components/error/404'
 import InternalServerError from '@/components/error/500'
+import SkuAttributeName from '@/components/SkuAttributeName'
+import SkuAttributeValue from '@/components/SkuAttributeValue'
 
 Vue.use(Router)
 
@@ -52,6 +54,22 @@ export default new Router({
         component: ShopOwner,
         meta: {
           title: '店主管理'
+        }
+      },
+      {
+        path: 'sku/attributeName',
+        name: 'AttributeName',
+        component: SkuAttributeName,
+        meta: {
+          title: 'SKU管理'
+        }
+      },
+      {
+        path: 'sku/attributeValue',
+        name: 'AttributeValue',
+        component: SkuAttributeValue,
+        meta: {
+          title: 'SKU管理'
         }
       }
       ]

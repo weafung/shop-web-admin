@@ -6,6 +6,13 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+import 'vue2-toast/lib/toast.css'
+import Toast from 'vue2-toast'
+
+Vue.use(Toast)
+Vue.use(VueAxios, axios)
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
@@ -16,5 +23,3 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
-
-
