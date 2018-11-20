@@ -1,30 +1,30 @@
 <template>
-  <div class="manager">
-    <el-row>
-      <el-col :span="24">
-        <div class="box-card">
-          <el-form :inline="true">
-            <el-form-item label="店主状态">
-              <el-select v-model="search.accountStatus" placeholder="请选择">
-                <el-option v-for="item in accountStatusOptions" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="单项查询" prop="searchContent">
-              <el-input :placeholder="`请输入${search.searchType.label}`" v-model="search.searchContent" class="search-content" maxlength="100">
-                <el-select v-model="search.searchType" slot="prepend" class="search-type" @change="handleSearchTypeChange">
-                  <el-option v-for="item in searchTypeOptions" :key="item.value" :label="item.label" :value="item"></el-option>
-                </el-select>
-              </el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="handleSearch">查询</el-button>
-              <el-button type="primary" @click="handleReset">重置</el-button>
-            </el-form-item>
-          </el-form>
-        </div>
-        <!-- 查询项 -->
-        <!-- <el-table :data="list" style="width: 100%;" v-loading="loading" max-height="600" stripe  ref="table">
+    <div class="manager">
+        <el-row >
+            <el-col :span="24">
+                <div class="box-card">
+                    <el-form :inline="true">
+                        <el-form-item label="状态">
+                            <el-select v-model="search.accountStatus" placeholder="请选择">
+                                <el-option v-for="item in accountStatusOptions" :key="item.value" :label="item.label" :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="单项查询" prop="searchContent">
+                            <el-input :placeholder="`请输入${search.searchType.label}`" v-model="search.searchContent" class="search-content" maxlength="100">
+                                <el-select v-model="search.searchType" slot="prepend" class="search-type" @change="handleSearchTypeChange">
+                                    <el-option v-for="item in searchTypeOptions" :key="item.value" :label="item.label" :value="item"></el-option>
+                                </el-select>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="handleSearch">查询</el-button>
+                            <el-button type="primary" @click="handleReset">重置</el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                <!-- 查询项 -->
+                <!-- <el-table :data="list" style="width: 100%;" v-loading="loading" max-height="600" stripe  ref="table">
                     <el-table-column :fixed="item.fixed" :prop="item.key" :label="item.name" v-for="item in source.fieldsAlready" :key="item.key" header-align="center" align="center">
                         <template slot-scope="scope">
                             <el-button size="mini" @click="handlePromotion(scope.$index, scope.row)" v-if="item.key === 'opeartion'" type="success">晋升</el-button>
@@ -43,9 +43,17 @@
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listParams.pageIndex" :page-sizes="[5,10, 20, 50]" :page-size="listParams.pageSize" @prev-click="listParams.pageIndex > 1 ? listParams.pageIndex-- : 1"
                     background @next-click="listParams.pageIndex < (totalSize/listParams.pageSize) ? listParams.pageIndex++ : (totalSize/listParams.pageSize)" layout="total, sizes, prev, pager, next, jumper" :total="totalSize" class="pagination">
                 </el-pagination> -->
-      </el-col>
-    </el-row>
-  </div>
+                <el-table :data="tableData" style="width: 100%">
+                    <el-table-column prop="date" label="日期" width="180">
+                    </el-table-column>
+                    <el-table-column prop="name" label="姓名" width="180">
+                    </el-table-column>
+                    <el-table-column prop="address" label="地址">
+                    </el-table-column>
+                </el-table>
+            </el-col>
+        </el-row>
+    </div>
 </template>
 
 <script>
@@ -101,12 +109,37 @@ export default {
         searchContent: [
           { max: 100, message: "最大长度为100个字符", trigger: "blur" }
         ]
-      }
+      },
+      tableData: [
+        {
+          date: "2016-05-02",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          date: "2016-05-04",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1517 弄"
+        },
+        {
+          date: "2016-05-01",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1519 弄"
+        },
+        {
+          date: "2016-05-03",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1516 弄"
+        }
+      ]
     };
   },
   methods: {
     handleSearch() {},
-    handleReset() {}
+    handleReset() {},
+    handleSearchTypeChange() {
+      this.search.searchContent = "";
+    }
   }
 };
 </script>
