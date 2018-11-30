@@ -11,6 +11,7 @@ import NotFound from '@/components/error/404'
 import InternalServerError from '@/components/error/500'
 import SkuAttributeName from '@/components/SkuAttributeName'
 import SkuAttributeValue from '@/components/SkuAttributeValue'
+import Category from '@/components/Category'
 
 Vue.use(Router)
 
@@ -54,6 +55,14 @@ export default new Router({
         component: ShopOwner,
         meta: {
           title: '店主管理'
+        }
+      },
+      {
+        path: 'category',
+        name: 'Category',
+        component: Category,
+        meta: {
+          title: '类目管理'
         }
       },
       {

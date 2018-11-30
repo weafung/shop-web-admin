@@ -39,7 +39,10 @@
               <span slot="title"> SKU值管理 </span>
             </el-menu-item>
           </el-submenu>
-
+          <el-menu-item index="/admin/category">
+            <i class="el-icon-setting"></i>
+            <span slot="title"> 类目管理 </span>
+          </el-menu-item>
           <el-menu-item index="/admin/shopOwner">
             <i class="el-icon-setting"></i>
             <span slot="title"> 店主管理 </span>
