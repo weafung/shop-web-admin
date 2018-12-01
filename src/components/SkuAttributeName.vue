@@ -44,7 +44,7 @@ export default {
       this.$prompt('请输入SKU名称', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        inputPattern: /[\u4e00-\u9fa5]/,
+        inputPattern: /.{1,}/,
         inputErrorMessage: '请输入文字'
       }).then(({ value }) => {
         this.$http.post(process.env.API_ROOT + '/api/admin/sku/attributeName?name=' + value).then(Response => {

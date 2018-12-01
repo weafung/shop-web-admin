@@ -9,8 +9,22 @@
       </ul>
     </el-header>
     <el-container>
-      <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-        <el-menu :default-active="this.$route.path.substr()" :collapse="false" background-color="#ffffff" text-color="#444040" active-text-color="#1e73e6" :router="true">
+      <el-aside
+        width="230px"
+        style="background-color: rgb(238, 241, 246)"
+      >
+        <el-menu
+          :default-active="this.$route.path.substr()"
+          :collapse="false"
+          background-color="#ffffff"
+          text-color="#444040"
+          active-text-color="#1e73e6"
+          :router="true"
+        >
+          <el-menu-item index="/admin/order">
+            <i class="el-icon-setting"></i>
+            <span slot="title"> 订单管理 </span>
+          </el-menu-item>
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>

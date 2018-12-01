@@ -12,6 +12,7 @@ import InternalServerError from '@/components/error/500'
 import SkuAttributeName from '@/components/SkuAttributeName'
 import SkuAttributeValue from '@/components/SkuAttributeValue'
 import Category from '@/components/Category'
+import Order from '@/components/Order'
 
 Vue.use(Router)
 
@@ -63,6 +64,14 @@ export default new Router({
         component: Category,
         meta: {
           title: '类目管理'
+        }
+      },
+      {
+        path: 'order',
+        name: 'Order',
+        component: Order,
+        meta: {
+          title: '订单管理'
         }
       },
       {
