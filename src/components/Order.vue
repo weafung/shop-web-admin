@@ -180,6 +180,10 @@
           >
             <template slot-scope="scope">
               <el-button
+                size="mini"
+                @click="handleLook(scope.row)"
+              >详细</el-button>
+              <el-button
                 v-if="scope.row.status == 1"
                 size="mini"
                 @click="handlePackage(scope.row)"
@@ -194,6 +198,49 @@
         </el-table>
       </el-col>
     </el-row>
+    <el-dialog
+      title="查看订单"
+      :visible.sync="dialogFormVisible"
+    >
+      <el-form
+        :model="form"
+        v-if="form.gorderDTO !==undefined"
+      >
+        <el-form-item
+          label="数量"
+          :label-width="'120px'"
+        >
+          共 <span style="color:red"> {{form.gorderDTO['count']}} </span>件
+        </el-form-item>
+        <el-form-item
+          label="价格"
+          :label-width="'120px'"
+        >
+          <span style="color:red"> {{form.gorderDTO['money'] / 100}} </span>元
+        </el-form-item>
+        <el-form-item
+          label="商品"
+          :label-width="'120px'"
+        >
+          <div
+            v-for="sorder in form.sorderDTOList"
+            :key="sorder.orderId"
+          >
+            {{sorder.title}}
+              <span v-for="(attribute, key) in sorder.attributes" :key="'attribute' + key">
+                <span style="color:red">【{{attribute.attributeName}} : {{attribute.attributeValue}}】</span>
+              </span>
+            x <span style="color:red">{{sorder.count}}</span> 件 (<span style="color:red">{{sorder.money / 100}} </span>元)
+          </div>
+        </el-form-item>
+      </el-form>
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
+        <el-button @click="dialogFormVisible = false">关闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -238,6 +285,10 @@ export default {
       }
     ]
     return {
+      dialogFormVisible: false,
+      form: {
+        name: '1'
+      },
       tag: { '2': 'waring', '1': 'danger', '0': 'info', '3': 'success' },
       loading: false,
       listParams: {
@@ -360,7 +411,7 @@ export default {
       }).then(() => {
         let params = {}
         params['gorderId'] = row.gorderId
-        this.$http.delete(process.env.API_ROOT + '/api/admin/order', {params: params}).then(Response => {
+        this.$http.delete(process.env.API_ROOT + '/api/admin/order', { params: params }).then(Response => {
           if (Response.data.code === 200) {
             this.$message({
               type: 'success',
@@ -382,6 +433,23 @@ export default {
         //   type: 'info',
         //   message: '已取消删除'
         // })
+      })
+    },
+    handleLook (row) {
+      let params = {}
+      params['gorderId'] = row.gorderId
+      this.$http.get(process.env.API_ROOT + '/api/admin/order/detail', { params: params }).then(Response => {
+        if (Response.data.code === 200) {
+          this.form = Response.data.data
+          this.dialogFormVisible = true
+          console.log(this.form)
+        } else {
+          console.log(Response.data)
+          this.$message.error('网络出错,请重新尝试')
+        }
+      }).catch(Error => {
+        console.log(Error)
+        this.$message.error('网络出错,请重新尝试')
       })
     },
     formatter (row, column) {
