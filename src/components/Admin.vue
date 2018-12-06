@@ -22,10 +22,14 @@
           :router="true"
         >
           <el-menu-item index="/admin/order">
-            <i class="el-icon-setting"></i>
+            <i class="el-icon-location"></i>
             <span slot="title"> 订单管理 </span>
           </el-menu-item>
-          <el-submenu index="1">
+          <el-menu-item index="/admin/goods">
+            <i class="el-icon-location"></i>
+            <span slot="title"> 商品管理 </span>
+          </el-menu-item>
+          <!-- <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>商品管理</span>
@@ -38,23 +42,23 @@
               <i class="el-icon-setting"></i>
               <span slot="title"> 库存管理 </span>
             </el-menu-item>
-          </el-submenu>
+          </el-submenu> -->
           <el-submenu index="/">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>SKU管理</span>
             </template>
             <el-menu-item index="/admin/sku/attributeName">
-              <i class="el-icon-setting"></i>
+              <i class="el-icon-star-on"></i>
               <span slot="title"> SKU名管理 </span>
             </el-menu-item>
             <el-menu-item index="/admin/sku/attributeValue">
-              <i class="el-icon-setting"></i>
+              <i class="el-icon-star-on"></i>
               <span slot="title"> SKU值管理 </span>
             </el-menu-item>
           </el-submenu>
           <el-menu-item index="/admin/category">
-            <i class="el-icon-setting"></i>
+            <i class="el-icon-star-on"></i>
             <span slot="title"> 类目管理 </span>
           </el-menu-item>
           <el-menu-item index="/admin/shopOwner">
