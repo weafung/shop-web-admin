@@ -5,239 +5,109 @@
         <div class="box-card">
           <el-form :inline="true">
             <el-form-item label="状态">
-              <el-select
-                v-model="search.status"
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in statusOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
+              <el-select v-model="search.status" placeholder="请选择">
+                <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item
-              label="单项查询"
-              prop="searchContent"
-            >
-              <el-input
-                :placeholder="`请输入${search.searchType.label}`"
-                v-model="search.searchContent"
-                class="search-content"
-                maxlength="100"
-              >
-                <el-select
-                  v-model="search.searchType"
-                  slot="prepend"
-                  class="search-type"
-                  @change="handleSearchTypeChange"
-                >
-                  <el-option
-                    v-for="item in searchTypeOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item"
-                  ></el-option>
+            <el-form-item label="单项查询" prop="searchContent">
+              <el-input :placeholder="`请输入${search.searchType.label}`" v-model="search.searchContent" class="search-content" maxlength="100">
+                <el-select v-model="search.searchType" slot="prepend" class="search-type" @change="handleSearchTypeChange">
+                  <el-option v-for="item in searchTypeOptions" :key="item.value" :label="item.label" :value="item"></el-option>
                 </el-select>
               </el-input>
             </el-form-item>
             <div>
               <el-form-item label="下单时间">
-                <el-date-picker
-                  v-model="search.orderTime"
-                  type="datetimerange"
-                  range-separator="至"
-                  start-placeholder="开始时间"
-                  end-placeholder="结束时间"
-                >
+                <el-date-picker v-model="search.orderTime" type="datetimerange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间">
                 </el-date-picker>
               </el-form-item>
               <el-form-item label="付款时间">
-                <el-date-picker
-                  v-model="search.payTime"
-                  type="datetimerange"
-                  range-separator="至"
-                  start-placeholder="开始时间"
-                  end-placeholder="结束时间"
-                >
+                <el-date-picker v-model="search.payTime" type="datetimerange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间">
                 </el-date-picker>
               </el-form-item>
             </div>
             <div>
               <el-form-item label="发货时间">
-                <el-date-picker
-                  v-model="search.packageTime"
-                  type="datetimerange"
-                  range-separator="至"
-                  start-placeholder="开始时间"
-                  end-placeholder="结束时间"
-                >
+                <el-date-picker v-model="search.packageTime" type="datetimerange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间">
                 </el-date-picker>
               </el-form-item>
               <el-form-item label="收货时间">
-                <el-date-picker
-                  v-model="search.confirmTime"
-                  type="datetimerange"
-                  range-separator="至"
-                  start-placeholder="开始时间"
-                  end-placeholder="结束时间"
-                >
+                <el-date-picker v-model="search.confirmTime" type="datetimerange" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间">
                 </el-date-picker>
               </el-form-item>
             </div>
             <el-form-item>
-              <el-button
-                type="primary"
-                @click="handleSearch"
-              >查询</el-button>
-              <el-button
-                type="primary"
-                @click="handleReset"
-              >重置</el-button>
+              <el-button type="primary" @click="handleSearch">查询</el-button>
+              <el-button type="primary" @click="handleReset">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
-        <el-table
-          :data="tableData"
-          style="width: 100%"
-        >
-          <el-table-column
-            prop="gorderId"
-            label="订单号"
-          >
+        <el-table :data="tableData" style="width: 100%">
+          <el-table-column prop="gorderId" label="订单号">
           </el-table-column>
-          <el-table-column
-            prop="name"
-            label="收货人"
-            width="80"
-          >
+          <el-table-column prop="name" label="收货人" width="80">
           </el-table-column>
-          <el-table-column
-            prop="phone"
-            label="手机号"
-            width="130"
-          >
+          <el-table-column prop="phone" label="手机号" width="130">
           </el-table-column>
-          <el-table-column
-            prop="address"
-            label="收货地址"
-          >
+          <el-table-column prop="address" label="收货地址">
           </el-table-column>
-          <el-table-column
-            prop="status"
-            label="订单状态"
-            width="80"
-          >
+          <el-table-column prop="status" label="订单状态" width="80">
             <template slot-scope="scope">
-              <el-tag
-                :type="tag[scope.row.status]"
-                disable-transitions
-              >{{statusOptions[scope.row.status + 1]['label']}}</el-tag>
+              <el-tag :type="tag[scope.row.status]" disable-transitions>{{statusOptions[scope.row.status + 1]['label']}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="packageCode"
-            label="快递运单号"
-          >
+          <el-table-column prop="packageCode" label="快递运单号">
           </el-table-column>
-          <el-table-column
-            prop="orderTime"
-            label="下单时间"
-          >
+          <el-table-column prop="orderTime" label="下单时间">
             <template slot-scope="scope">
               {{timestampToDateTime(scope.row.orderTime)}}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="payTime"
-            label="付款时间"
-          >
+          <el-table-column prop="payTime" label="付款时间">
             <template slot-scope="scope">
               {{timestampToDateTime(scope.row.payTime)}}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="packageTime"
-            label="发货时间"
-          >
+          <el-table-column prop="packageTime" label="发货时间">
             <template slot-scope="scope">
               {{timestampToDateTime(scope.row.packageTime)}}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="confirmTime"
-            label="收货时间"
-          >
+          <el-table-column prop="confirmTime" label="收货时间">
             <template slot-scope="scope">
               {{timestampToDateTime(scope.row.confirmTime)}}
             </template>
           </el-table-column>
-          <el-table-column
-            fixed="right"
-            label="操作"
-          >
+          <el-table-column fixed="right" label="操作">
             <template slot-scope="scope">
-              <el-button
-                size="mini"
-                @click="handleLook(scope.row)"
-              >详细</el-button>
-              <el-button
-                v-if="scope.row.status == 1"
-                size="mini"
-                @click="handlePackage(scope.row)"
-              >发货</el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                @click="handleDelete(scope.row)"
-              >删除</el-button>
+              <el-button size="mini" @click="handleLook(scope.row)">详细</el-button>
+              <el-button v-if="scope.row.status == 1" size="mini" @click="handlePackage(scope.row)">发货</el-button>
+              <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-col>
     </el-row>
-    <el-dialog
-      title="查看订单"
-      :visible.sync="dialogFormVisible"
-    >
-      <el-form
-        :model="form"
-        v-if="form.gorderDTO !==undefined"
-      >
-        <el-form-item
-          label="数量"
-          :label-width="'120px'"
-        >
+    <el-dialog title="查看订单" :visible.sync="dialogFormVisible">
+      <el-form :model="form" v-if="form.gorderDTO !==undefined">
+        <el-form-item label="数量" :label-width="'120px'">
           共 <span style="color:red"> {{form.gorderDTO['count']}} </span>件
         </el-form-item>
-        <el-form-item
-          label="价格"
-          :label-width="'120px'"
-        >
+        <el-form-item label="价格" :label-width="'120px'">
           <span style="color:red"> {{form.gorderDTO['money'] / 100}} </span>元
         </el-form-item>
-        <el-form-item
-          label="商品"
-          :label-width="'120px'"
-        >
-          <div
-            v-for="sorder in form.sorderDTOList"
-            :key="sorder.orderId"
-          >
+        <el-form-item label="商品" :label-width="'120px'">
+          <div v-for="sorder in form.sorderDTOList" :key="sorder.orderId">
             {{sorder.title}}
-              <span v-for="(attribute, key) in sorder.attributes" :key="'attribute' + key">
-                <span style="color:red">【{{attribute.attributeName}} : {{attribute.attributeValue}}】</span>
-              </span>
+            <span v-for="(attribute, key) in sorder.attributes" :key="'attribute' + key">
+              <span style="color:red">【{{attribute.attributeName}} : {{attribute.attributeValue}}】</span>
+            </span>
             x <span style="color:red">{{sorder.count}}</span> 件 (<span style="color:red">{{sorder.money / 100}} </span>元)
           </div>
         </el-form-item>
       </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
+      <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">关闭</el-button>
       </div>
     </el-dialog>

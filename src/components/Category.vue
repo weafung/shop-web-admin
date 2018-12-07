@@ -1,100 +1,41 @@
 <template>
   <div id="sku-attribute">
     <div class="block">
-      <el-tree
-        :data="data"
-        node-key="categoryId"
-        :default-expanded-keys="[0]"
-        highlight-current
-      >
-        <span
-          class="custom-tree-node"
-          slot-scope="{ node, data }"
-        >
+      <el-tree :data="data" node-key="categoryId" :default-expanded-keys="[0]" highlight-current>
+        <span class="custom-tree-node" slot-scope="{ node, data }">
           <!-- <img :src="data.image" v-if="data.image != ''"/> -->
           <span>{{ data.title }}</span>
           <span>
-            <el-button
-              type="text"
-              size="mini"
-              @click="() => append(data)"
-            >
+            <el-button type="text" size="mini" @click="() => append(data)">
               添加子类
             </el-button>
-            <el-button
-              type="text"
-              size="mini"
-              @click="() => edit(node, data)"
-              v-if="data.categoryId !== 0"
-            >
+            <el-button type="text" size="mini" @click="() => edit(node, data)" v-if="data.categoryId !== 0">
               编辑
             </el-button>
-            <el-button
-              type="text"
-              size="mini"
-              @click="() => remove(node, data)"
-              v-if="data.categoryId !== 0"
-            >
+            <el-button type="text" size="mini" @click="() => remove(node, data)" v-if="data.categoryId !== 0">
               删除
             </el-button>
           </span>
         </span>
       </el-tree>
-      <el-dialog
-        title="添加子类"
-        :visible.sync="dialogFormVisible"
-      >
+      <el-dialog title="添加子类" :visible.sync="dialogFormVisible">
         <el-form :model="form">
-          <el-form-item
-            label="类目名称 *"
-            :label-width="formLabelWidth"
-          >
-            <el-input
-              v-model="form.name"
-              autocomplete="off"
-            ></el-input>
+          <el-form-item label="类目名称 *" :label-width="formLabelWidth">
+            <el-input v-model="form.name" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item
-            label="类目排序 *"
-            :label-width="formLabelWidth"
-          >
-            <el-input
-              v-model="form.rank"
-              autocomplete="off"
-            ></el-input>
+          <el-form-item label="类目排序 *" :label-width="formLabelWidth">
+            <el-input v-model="form.rank" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item
-            label="类目图标"
-            :label-width="formLabelWidth"
-          >
-            <el-upload
-              class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :show-file-list="false"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
-            >
-              <img
-                v-if="form.imageUrl"
-                :src="form.imageUrl"
-                class="avatar"
-              >
-              <i
-                v-else
-                class="el-icon-plus avatar-uploader-icon"
-              ></i>
+          <el-form-item label="类目图标" :label-width="formLabelWidth">
+            <el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+              <img v-if="form.imageUrl" :src="form.imageUrl" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item>
         </el-form>
-        <div
-          slot="footer"
-          class="dialog-footer"
-        >
+        <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button
-            type="primary"
-            @click="submit"
-          >确 定</el-button>
+          <el-button type="primary" @click="submit">确 定</el-button>
         </div>
       </el-dialog>
     </div>

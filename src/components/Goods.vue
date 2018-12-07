@@ -1,5 +1,8 @@
 <template>
   <div class="goods">
+    <el-row fixed="right">
+      <el-button type="primary" @click="handleAddGoods" style="float: left;"> 添加商品 </el-button>
+    </el-row>
     <el-row>
       <el-col :span="24">
         <!-- <div class="box-card">
@@ -55,216 +58,110 @@
             </el-form-item>
           </el-form>
         </div> -->
-        <el-table
-          :data="tableData"
-          style="width: 100%"
-        >
-          <el-table-column
-            prop="goodsId"
-            label="商品ID"
-          >
+        <el-table :data="tableData" style="width: 100%">
+          <el-table-column prop="goodsId" label="商品ID" width="180">
           </el-table-column>
-          <el-table-column
-            prop="title"
-            label="商品名"
-          >
+          <el-table-column prop="title" label="商品名">
           </el-table-column>
-          <el-table-column
-            prop="category"
-            label="分类"
-          >
+          <el-table-column prop="category" label="分类">
             <template slot-scope="scope">
               {{(scope.row.firstCategory ? scope.row.firstCategory: '')
               + (scope.row.secondCategory ? '-' + scope.row.secondCategory : '' )
               + (scope.row.thirdCategory ? '-' + scope.row.thirdCategory : '')}}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="introduce"
-            label="商品介绍"
-          >
+          <el-table-column prop="introduce" label="商品介绍" :show-overflow-tooltip="true">
           </el-table-column>
-          <el-table-column
-            fixed="right"
-            label="操作"
-          >
+          <el-table-column fixed="right" label="操作">
             <template slot-scope="scope">
-              <el-button
-                size="mini"
-                @click="handleEditGoods(scope.row)"
-              >编辑</el-button>
-              <el-button
-                size="mini"
-                @click="handleManageImage(scope.row)"
-              >图片管理</el-button>
-              <el-button
-                size="mini"
-                @click="handleManageSku(scope.row.goodsId)"
-              >SKU管理</el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                @click="handleDeleteGoods(scope.row)"
-              >删除</el-button>
+              <el-button size="mini" @click="handleEditGoods(scope.row)">编辑</el-button>
+              <el-button size="mini" @click="handleManageImage(scope.row.goodsId)">图片管理</el-button>
+              <el-button size="mini" @click="handleManageSku(scope.row.goodsId)">SKU管理</el-button>
+              <el-button size="mini" type="danger" @click="handleDeleteGoods(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-col>
     </el-row>
-    <div>
-      <el-dialog
-        title="SKU管理"
-        :visible.sync="skuManageDialogVisible"
-      >
-        <el-row>
-          <el-col :span="24">
-            <el-table
-              :data="skuTableData"
-              style="width: 100%"
-            >
-              <el-table-column
-                prop="skuId"
-                label="SKU ID"
-              >
-              </el-table-column>
-              <el-table-column
-                prop="skuId"
-                label="规格"
-              >
-                <template slot-scope="scope">
-                  {{showAttributes(scope.row.attributes)}}
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="salePrice"
-                label="销售价格"
-              >
-                <template slot-scope="scope">
-                  ￥ {{scope.row.salePrice / 100}}
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="marketPrice"
-                label="市场价格"
-              >
-                <template slot-scope="scope">
-                  ￥ {{scope.row.marketPrice / 100}}
-                </template>
-              </el-table-column>
-              <el-table-column
-                fixed="right"
-                label="操作"
-              >
-                <template slot-scope="scope">
-                  <el-button
-                    size="mini"
-                    @click="handleEditSku(scope.row)"
-                  >编辑</el-button>
-                  <el-button
-                    size="mini"
-                    type="danger"
-                    @click="handleDeleteSkuOfGoods(scope.row)"
-                  >删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-col>
-        </el-row>
-      </el-dialog>
-    </div>
-    <div>
-      <el-dialog
-        title="编辑商品"
-        :visible.sync="editDialogFormVisible"
-      >
-        <el-form :model="editForm.data">
-          <el-form-item
-            :label-width="'200px'"
-            label="商品名称"
-          >
-            <el-input
-              v-model="editForm.data.title"
-              autocomplete="off"
-            ></el-input>
-          </el-form-item>
-          <el-form-item
-            :label-width="'200px'"
-            label="商品分类"
-          >
-            <el-cascader
-              :options="categoriesData"
-              :props="props"
-              v-model="editForm.categories"
-              @before-filter="filter"
-            ></el-cascader>
-          </el-form-item>
-          <el-form-item
-            :label-width="'200px'"
-            label="商品介绍"
-          >
-            <el-input
-              type="textarea"
-              :rows="10"
-              v-model="editForm.data.introduce"
-              autocomplete="off"
-            ></el-input>
-          </el-form-item>
-        </el-form>
-        <div
-          slot="footer"
-          class="dialog-footer"
-        >
-          <el-button
-            @click="submitEdit"
-            type="primary"
-          >保存</el-button>
-          <el-button @click="editDialogFormVisible = false">关闭</el-button>
-        </div>
-      </el-dialog>
-    </div>
-    <div>
-      <el-dialog
-        title="编辑SKU"
-        :visible.sync="editSkuDialogFormVisible"
-      >
-        <el-form :model="editSkuForm.data">
-          <el-form-item
-            :label-width="'200px'"
-            label="销售价格"
-          >
-            <el-input
-              v-model="editSkuForm.salePrice"
-              autocomplete="off"
-            ></el-input>
-          </el-form-item>
-          <el-form-item
-            :label-width="'200px'"
-            label="市场价格"
-          >
-            <el-input
-              v-model="editSkuForm.marketPrice"
-              autocomplete="off"
-            ></el-input>
-            <!-- <el-cascader
-              :options="categoriesData"
-              :props="props"
-              v-model="editSkuForm.categories"
-              @before-filter="filter"
-            ></el-cascader> -->
-          </el-form-item>
-        </el-form>
-        <div
-          slot="footer"
-          class="dialog-footer"
-        >
-          <el-button
-            @click="submitEdit"
-            type="primary"
-          >保存</el-button>
-          <el-button @click="editSkuDialogFormVisible = false">关闭</el-button>
-        </div>
-      </el-dialog>
-    </div>
+
+    <el-dialog title="SKU管理" :visible.sync="skuManageDialogVisible">
+      <el-row>
+        <el-col :span="24">
+          <el-table :data="skuTableData" style="width: 100%">
+            <el-table-column prop="skuId" label="SKU ID">
+            </el-table-column>
+            <el-table-column prop="skuId" label="规格">
+              <template slot-scope="scope">
+                {{ formatterForAttributes(scope.row.attributes) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="salePrice" label="销售价格">
+              <template slot-scope="scope">
+                ￥ {{scope.row.salePrice / 100}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="marketPrice" label="市场价格">
+              <template slot-scope="scope">
+                ￥ {{scope.row.marketPrice / 100}}
+              </template>
+            </el-table-column>
+            <el-table-column fixed="right" label="操作">
+              <template slot-scope="scope">
+                <el-button size="mini" @click="handleEditSku(scope.row)">编辑</el-button>
+                <el-button size="mini" type="danger" @click="handleDeleteSkuOfGoods(scope.row)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-col>
+      </el-row>
+    </el-dialog>
+
+    <el-dialog :title="isNewGoods? '添加商品': '编辑商品'" :visible.sync="editGoodsDialogFormVisible">
+      <el-form :model="editGoodsForm.data">
+        <el-form-item :label-width="'100px'" label="商品名称">
+          <el-input v-model="editGoodsForm.data.title"></el-input>
+        </el-form-item>
+        <el-form-item :label-width="'100px'" label="商品分类">
+          <el-cascader :options="categoriesData" :props="props" v-model="editGoodsForm.categories"></el-cascader>
+        </el-form-item>
+        <el-form-item :label-width="'100px'" label="商品介绍">
+          <el-input type="textarea" :rows="10" v-model="editGoodsForm.data.introduce"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleSubmitOrEditGoods" type="primary">保存</el-button>
+        <el-button @click="editGoodsDialogFormVisible = false">关闭</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="编辑SKU" :visible.sync="editSkuDialogFormVisible">
+      <el-form :model="editSkuForm.data">
+        <el-form-item :label-width="'100px'" label="销售价格">
+          <el-input v-model="editSkuForm.salePrice"></el-input>
+        </el-form-item>
+        <el-form-item :label-width="'100px'" label="市场价格">
+          <el-input v-model="editSkuForm.marketPrice"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handkeSubmitEditSkuOfGoods" type="primary">保存</el-button>
+        <el-button @click="editSkuDialogFormVisible = false">关闭</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="图片管理" :visible.sync="imageDialogFormVisible">
+      <el-form>
+        <el-form-item label="商品图片">
+        </el-form-item>
+        <el-upload :action="uploadImageUrl" list-type="picture-card" :before-upload="handleBeforeImageUpload" :on-success="handleImageUploadSuccess" :on-error="handleImageUploadError" :on-remove="handleImageRemove" :file-list="fileList">
+          <i class="el-icon-plus"></i>
+        </el-upload>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleSubmitImageOfGoods" type="primary">保存</el-button>
+        <el-button @click="() => {this.imageDialogFormVisible = false, this.fileList = []}">关闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -273,9 +170,14 @@ export default {
   name: 'Goods',
   data () {
     return {
-      editForm: {
-        data: {},
-        categories: {}
+      fileList: [],
+
+      editGoodsForm: {
+        data: {
+          'title': '',
+          'introduce': ''
+        },
+        categories: []
       },
 
       skuTableData: [],
@@ -294,9 +196,14 @@ export default {
         label: 'title',
         children: 'children'
       },
-      editDialogFormVisible: false,
+      editGoodsDialogFormVisible: false,
       skuManageDialogVisible: false,
-      editSkuDialogFormVisible: false
+      editSkuDialogFormVisible: false,
+      imageDialogFormVisible: false,
+
+      isNewGoods: false,
+
+      uploadImageUrl: process.env.UPLOAD_IMAGE_URL
     }
   },
   mounted () {
@@ -315,19 +222,167 @@ export default {
         this.categoriesData = data['children']
       })
     },
-    showAttributes (attributes) {
+    formatterForAttributes (attributes) {
       let str = ''
+      let separator = ' / '
       for (let attribute of attributes) {
-        str += ' / ' + attribute.attributeValue
+        str += separator + attribute.attributeValue
       }
-      return str.substring(3)
+      return str.substring(separator.length)
+    },
+    // ===============================================================
+    handleAddGoods () {
+      this.isNewGoods = true
+      this.editGoodsDialogFormVisible = true
     },
     handleEditGoods (row) {
-      this.editForm = {
+      this.isNewGoods = false
+      this.editGoodsForm = {
         'data': row,
         'categories': [row.firstCategoryId, row.secondCategoryId, row.thirdCategoryId]
       }
-      this.editDialogFormVisible = true
+      this.editGoodsDialogFormVisible = true
+    },
+    handleSubmitOrEditGoods () {
+      if (this.isNewGoods) {
+        this.handleSubmitSaveGoods()
+      } else {
+        this.handleSubmitEditGoods()
+      }
+    },
+    handleSubmitSaveGoods () {
+      let params = {}
+      let form = this.editGoodsForm
+      params['title'] = form.data.title
+      params['introduce'] = form.data.introduce
+      if (form.categories[0]) {
+        params['firstCategoryId'] = form.categories[0]
+      }
+      if (form.categories[1]) {
+        params['secondCategoryId'] = form.categories[1]
+      }
+      if (form.categories[2]) {
+        params['thirdCategoryId'] = form.categories[2]
+      }
+      console.log(params)
+      this.$http.post(process.env.API_ROOT + '/api/admin/goods', params).then(Response => {
+        if (Response.data.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '保存成功'
+          })
+          this.fetchTableData()
+          this.editGoodsDialogFormVisible = false
+        } else {
+          this.$message.error('保存失败, 请重新尝试')
+          console.log(Response.data)
+        }
+      }).catch(Error => {
+        this.$message.error('网络出错, 请重新尝试')
+        console.log(Error)
+      })
+    },
+    handleSubmitEditGoods () {
+      let params = {}
+      let form = this.editGoodsForm
+      params['goodsId'] = form.data.goodsId
+      params['title'] = form.data.title
+      params['introduce'] = form.data.introduce
+      if (form.categories[0]) {
+        params['firstCategoryId'] = form.categories[0]
+      }
+      if (form.categories[1]) {
+        params['secondCategoryId'] = form.categories[1]
+      }
+      if (form.categories[2]) {
+        params['thirdCategoryId'] = form.categories[2]
+      }
+      console.log(params)
+      this.$http.put(process.env.API_ROOT + '/api/admin/goods', params).then(Response => {
+        if (Response.data.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '保存成功'
+          })
+          this.fetchTableData()
+        } else {
+          this.$message.error('保存失败, 请重新尝试')
+          console.log(Response.data)
+        }
+      }).catch(Error => {
+        this.$message.error('网络出错, 请重新尝试')
+        console.log(Error)
+      })
+    },
+    // ===============================================================
+    handleManageImage (goodsId) {
+      this.imageDialogFormVisible = true
+      this.goodsId = goodsId
+      let params = {}
+      params['goodsId'] = goodsId
+      this.$http.get(process.env.API_ROOT + '/api/admin/goods/images', { params: params }).then(Response => {
+        this.fileList = []
+        for (let url of Response.data.data) {
+          this.fileList.push({ 'url': url })
+        }
+      })
+    },
+    handleSubmitImageOfGoods () {
+      let params = {}
+      params['goodsId'] = this.goodsId
+      params['imageUrls'] = []
+      for (let file of this.fileList) {
+        params['imageUrls'].push(file.url)
+      }
+      this.$http.put(process.env.API_ROOT + '/api/admin/goods/images', params).then(Response => {
+        if (Response.data.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '保存成功'
+          })
+          this.handleManageImage(this.goodsId)
+        } else {
+          this.$message.error('保存失败, 请重新尝试')
+          console.log(Response.data)
+        }
+      }).catch(Error => {
+        this.$message.error('网络出错, 请重新尝试')
+        console.log(Error)
+      })
+    },
+    handleBeforeImageUpload (file) {
+      const isImage = file.type === 'image/jpeg' || file.type === 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isImage) {
+        this.$message.error('上传图片只能是 JPG 或 PNG 格式')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB')
+      }
+      return isImage && isLt2M
+    },
+    handleImageUploadError (err, file, fileList) {
+      this.$message.error('网络出错, 请重新尝试')
+      console.log(err)
+    },
+    handleImageUploadSuccess (res, file) {
+      this.fileList.push({ 'name': file.name, 'url': res.data })
+      console.log(res)
+      console.log(file)
+    },
+    handleImageRemove (file, fileList) {
+      this.fileList = fileList
+    },
+    // ===============================================================
+    handleManageSku (goodsId) {
+      this.skuManageDialogVisible = true
+      this.goodsId = goodsId
+      let params = {}
+      params['goodsId'] = goodsId
+      this.$http.get(process.env.API_ROOT + '/api/admin/goods/sku', { params: params }).then(Response => {
+        this.skuTableData = Response.data.data
+      })
     },
     handleEditSku (row) {
       this.editSkuForm = {
@@ -337,22 +392,8 @@ export default {
       }
       this.editSkuDialogFormVisible = true
     },
-    submitEdit () {
-      console.log(this.categories)
-    },
-    filter (value) {
-      console.log(value)
-    },
-    handleManageImage (row) { },
-    handleManageSku (goodsId) {
-      this.goodsId = goodsId
-      let params = {}
-      params['goodsId'] = goodsId
-      this.$http.get(process.env.API_ROOT + '/api/admin/goods/sku', { params: params }).then(Response => {
-        this.skuTableData = Response.data.data
-        this.skuManageDialogVisible = true
-      })
-    },
+    handkeSubmitEditSkuOfGoods () { },
+    // ===============================================================
     handleDeleteGoods (row) {
       this.$confirm('此操作将永久删除该商品, 是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -385,6 +426,7 @@ export default {
         // })
       })
     },
+    // ===============================================================
     handleDeleteSkuOfGoods (row) {
       this.$confirm('此操作将永久删除该商品的SKU, 是否继续?', '提示', {
         confirmButtonText: '确定',
