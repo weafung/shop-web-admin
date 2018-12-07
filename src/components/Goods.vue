@@ -85,6 +85,9 @@
     </el-row>
 
     <el-dialog title="SKU管理" :visible.sync="skuManageDialogVisible">
+      <el-row fixed="right">
+        <el-button type="primary" @click="handleAddSku" style="float: left;"> 添加SKU </el-button>
+      </el-row>
       <el-row>
         <el-col :span="24">
           <el-table :data="skuTableData" style="width: 100%">
@@ -122,7 +125,7 @@
           <el-input v-model="editGoodsForm.data.title"></el-input>
         </el-form-item>
         <el-form-item :label-width="'100px'" label="商品分类">
-          <el-cascader :options="categoriesData" :props="props" v-model="editGoodsForm.categories"></el-cascader>
+          <el-cascader :options="categoriesData" :props="goodsCascaderProps" v-model="editGoodsForm.categories"></el-cascader>
         </el-form-item>
         <el-form-item :label-width="'100px'" label="商品介绍">
           <el-input type="textarea" :rows="10" v-model="editGoodsForm.data.introduce"></el-input>
@@ -134,17 +137,35 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="编辑SKU" :visible.sync="editSkuDialogFormVisible">
+    <el-dialog :title="isNewSku? '添加SKU': '编辑SKU'" :visible.sync="editSkuDialogFormVisible">
       <el-form :model="editSkuForm.data">
+        <el-form-item :label-width="'100px'" label="SKU ID" v-if="!isNewSku">
+          <el-input v-model="editSkuForm.data.skuId" :disabled="true"></el-input>
+        </el-form-item>
         <el-form-item :label-width="'100px'" label="销售价格">
           <el-input v-model="editSkuForm.salePrice"></el-input>
         </el-form-item>
         <el-form-item :label-width="'100px'" label="市场价格">
           <el-input v-model="editSkuForm.marketPrice"></el-input>
         </el-form-item>
+        <!-- <el-form-item label="SKU图片" :label-width="'200px'">
+          <el-upload class="avatar-uploader" :action="uploadImageUrl" :show-file-list="false" :on-success="handleSkuImageUploadSuccess" :before-upload="beforeAvatarUpload">
+            <img v-if="editSkuForm.image" :src="editSkuForm.image" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-form-item> -->
+        <el-form-item :label-width="'100px'" label="SKU规格">
+          <div>
+            <el-button @click="handleAddSpecOfSku" type="primary" size="small">添加</el-button>
+          </div>
+          <div v-for="(item, index) in attributeDoms" :key="index">
+            <el-cascader :options="skuSpecData" :props="skuSpecCascaderProps" v-model="attributes[index]"></el-cascader>
+            <el-button @click="() => {attributeDoms.splice(index, 1), attributes.splice(index, 1)}" type="danger" size="small">删除</el-button>
+          </div>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handkeSubmitEditSkuOfGoods" type="primary">保存</el-button>
+        <el-button @click="handleSubmitSaveOrEditSkuOfGoods" type="primary">保存</el-button>
         <el-button @click="editSkuDialogFormVisible = false">关闭</el-button>
       </div>
     </el-dialog>
@@ -170,6 +191,10 @@ export default {
   name: 'Goods',
   data () {
     return {
+      attributeDoms: [],
+      ele: 0,
+      attributes: [],
+
       fileList: [],
 
       editGoodsForm: {
@@ -186,14 +211,21 @@ export default {
       editSkuForm: {
         data: {},
         salePrice: 0,
-        marketPrice: 0
+        marketPrice: 0,
+        image: ''
       },
 
       tableData: [],
       categoriesData: {},
-      props: {
+      skuSpecData: [],
+      goodsCascaderProps: {
         value: 'categoryId',
         label: 'title',
+        children: 'children'
+      },
+      skuSpecCascaderProps: {
+        value: 'id',
+        label: 'label',
         children: 'children'
       },
       editGoodsDialogFormVisible: false,
@@ -202,6 +234,7 @@ export default {
       imageDialogFormVisible: false,
 
       isNewGoods: false,
+      isNewSku: false,
 
       uploadImageUrl: process.env.UPLOAD_IMAGE_URL
     }
@@ -209,6 +242,7 @@ export default {
   mounted () {
     this.fetchTableData()
     this.fetchCategoryData()
+    this.fetchSkuSpecData()
   },
   methods: {
     fetchTableData () {
@@ -220,6 +254,11 @@ export default {
       this.$http.get(process.env.API_ROOT + '/api/admin/category').then(Response => {
         let data = Response.data.data
         this.categoriesData = data['children']
+      })
+    },
+    fetchSkuSpecData () {
+      this.$http.get(process.env.API_ROOT + '/api/admin/sku').then(Response => {
+        this.skuSpecData = Response.data.data
       })
     },
     formatterForAttributes (attributes) {
@@ -384,15 +423,48 @@ export default {
         this.skuTableData = Response.data.data
       })
     },
+    handleAddSku () {
+      this.isNewSku = true
+      this.editSkuForm = {
+        'data': {},
+        'salePrice': 0,
+        'marketPrice': 0,
+        'image': ''
+      }
+      this.editSkuDialogFormVisible = true
+      this.attributeDoms = []
+      this.ele = 0
+      this.attributes = []
+    },
     handleEditSku (row) {
+      this.isNewSku = false
       this.editSkuForm = {
         'data': row,
         'salePrice': row.salePrice / 100,
-        'marketPrice': row.marketPrice / 100
+        'marketPrice': row.marketPrice / 100,
+        'image': ''
       }
       this.editSkuDialogFormVisible = true
+      this.attributeDoms = []
+      this.ele = 0
+      this.attributes = []
+      for (let attribute of row.attributes) {
+        this.attributeDoms.push(this.ele++)
+        this.attributes.push([attribute.attributeNameId, attribute.attributeValueId])
+      }
     },
-    handkeSubmitEditSkuOfGoods () { },
+    handleAddSpecOfSku () {
+      this.attributeDoms.push(this.ele++)
+    },
+    handleSubmitSaveOrEditSkuOfGoods () {
+      console.log(this.ele)
+      console.log(this.attributeDoms)
+      console.log(this.attributes)
+      console.log(this.editSkuForm)
+    },
+    handleSkuImageUploadSuccess (res, file) {
+      this.editSkuForm['image'] = URL.createObjectURL(file.raw)
+    },
     // ===============================================================
     handleDeleteGoods (row) {
       this.$confirm('此操作将永久删除该商品, 是否继续?', '提示', {
@@ -504,5 +576,31 @@ export default {
 }
 .f-toe-2 {
   max-height: 3em;
+}
+
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+  border: 1px dashed;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+  border: 1px dashed;
 }
 </style>
