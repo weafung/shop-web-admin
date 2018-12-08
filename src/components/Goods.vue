@@ -3,61 +3,23 @@
     <el-row fixed="right">
       <el-button type="primary" @click="handleAddGoods" style="float: left;"> 添加商品 </el-button>
     </el-row>
-    <el-row>
-      <el-col :span="24">
-        <!-- <div class="box-card">
-          <el-form :inline="true">
-            <el-form-item label="状态">
-              <el-select
-                v-model="search.status"
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in statusOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item
-              label="单项查询"
-              prop="searchContent"
-            >
-              <el-input
-                :placeholder="`请输入${search.searchType.label}`"
-                v-model="search.searchContent"
-                class="search-content"
-                maxlength="100"
-              >
-                <el-select
-                  v-model="search.searchType"
-                  slot="prepend"
-                  class="search-type"
-                  @change="handleSearchTypeChange"
-                >
-                  <el-option
-                    v-for="item in searchTypeOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item"
-                  ></el-option>
+    <div class="box-card">
+      <el-form :inline="true">
+        <el-form-item label="单项查询" prop="searchContent">
+              <el-input :placeholder="`请输入${search.searchType.label}`" v-model="search.searchContent" class="search-content" maxlength="100">
+                <el-select v-model="search.searchType" slot="prepend" class="search-type" @change="handleSearchTypeChange">
+                  <el-option v-for="item in searchTypeOptions" :key="item.value" :label="item.label" :value="item"></el-option>
                 </el-select>
               </el-input>
             </el-form-item>
-            <el-form-item>
-              <el-button
-                type="primary"
-                @click="handleSearch"
-              >查询</el-button>
-              <el-button
-                type="primary"
-                @click="handleReset"
-              >重置</el-button>
-            </el-form-item>
-          </el-form>
-        </div> -->
+        <el-form-item>
+          <el-button type="primary" @click="handleSearch">查询</el-button>
+          <el-button type="primary" @click="handleReset">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+    <el-row>
+      <el-col :span="24">
         <el-table :data="tableData" style="width: 100%">
           <el-table-column prop="goodsId" label="商品ID" width="180">
           </el-table-column>
@@ -190,6 +152,16 @@
 export default {
   name: 'Goods',
   data () {
+    let searchTypeOptions = [
+      {
+        label: '商品ID',
+        value: 'goodsId'
+      },
+      {
+        label: '商品名称',
+        value: 'title'
+      }
+    ]
     return {
       attributeDoms: [],
       ele: 0,
@@ -235,7 +207,12 @@ export default {
 
       isNewGoods: false,
       isNewSku: false,
+      searchTypeOptions,
 
+      search: {
+        searchType: searchTypeOptions[0],
+        searchContent: ''
+      },
       uploadImageUrl: process.env.UPLOAD_IMAGE_URL
     }
   },
@@ -260,6 +237,24 @@ export default {
       this.$http.get(process.env.API_ROOT + '/api/admin/sku').then(Response => {
         this.skuSpecData = Response.data.data
       })
+    },
+    handleSearch () {
+      let params = {}
+      if (this.search.searchContent !== '') {
+        params[this.search.searchType['value']] = this.search.searchContent
+      }
+      this.$http.get(process.env.API_ROOT + '/api/admin/goods', { params: params }).then(Response => {
+        this.tableData = Response.data.data
+      })
+    },
+    handleReset () {
+      this.search = {
+        searchType: this.searchTypeOptions[0],
+        searchContent: ''
+      }
+    },
+    handleSearchTypeChange () {
+      this.search.searchContent = ''
     },
     formatterForAttributes (attributes) {
       let str = ''
@@ -461,6 +456,64 @@ export default {
       console.log(this.attributeDoms)
       console.log(this.attributes)
       console.log(this.editSkuForm)
+      if (this.isNewSku) {
+        this.handleSubmitSkuOfGoods()
+      } else {
+        this.handleEditSkuOfGoods()
+      }
+    },
+    handleSubmitSkuOfGoods () {
+      let params = {}
+      params['goodsId'] = this.goodsId
+      params['salePrice'] = parseInt(this.editSkuForm['salePrice'] * 100)
+      params['marketPrice'] = parseInt(this.editSkuForm['marketPrice'] * 100)
+      params['attributes'] = []
+      for (let attribute of this.attributes) {
+        params['attributes'].push({ 'attributeNameId': attribute[0], 'attributeValueId': attribute[1] })
+      }
+      this.$http.post(process.env.API_ROOT + '/api/admin/goods/sku', params).then(Response => {
+        if (Response.data.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '保存成功'
+          })
+          this.handleManageSku(this.goodsId)
+          this.editSkuDialogFormVisible = false
+        } else {
+          this.$message.error('保存失败, 请重新尝试')
+          console.log(Response.data)
+        }
+      }).catch(Error => {
+        this.$message.error('网络出错, 请重新尝试')
+        console.log(Error)
+      })
+    },
+    handleEditSkuOfGoods () {
+      let params = {}
+      params['goodsId'] = this.editSkuForm.data.goodsId
+      params['skuId'] = this.editSkuForm.data.skuId
+      params['salePrice'] = parseInt(this.editSkuForm['salePrice'] * 100)
+      params['marketPrice'] = parseInt(this.editSkuForm['marketPrice'] * 100)
+      params['attributes'] = []
+      for (let attribute of this.attributes) {
+        params['attributes'].push({ 'attributeNameId': attribute[0], 'attributeValueId': attribute[1] })
+      }
+      this.$http.put(process.env.API_ROOT + '/api/admin/goods/sku', params).then(Response => {
+        if (Response.data.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '保存成功'
+          })
+          this.handleManageSku(this.goodsId)
+          this.editSkuDialogFormVisible = false
+        } else {
+          this.$message.error('保存失败, 请重新尝试')
+          console.log(Response.data)
+        }
+      }).catch(Error => {
+        this.$message.error('网络出错, 请重新尝试')
+        console.log(Error)
+      })
     },
     handleSkuImageUploadSuccess (res, file) {
       this.editSkuForm['image'] = URL.createObjectURL(file.raw)
@@ -530,9 +583,7 @@ export default {
         //   message: '已取消删除'
         // })
       })
-    },
-    handleSearch () { },
-    handleReset () { }
+    }
   }
 }
 </script>

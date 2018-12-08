@@ -196,7 +196,6 @@ export default {
       })
     },
     handleSearch () {
-      console.log(this.search)
       let params = {}
       if (this.search.status !== '') {
         params['status'] = this.search.status
