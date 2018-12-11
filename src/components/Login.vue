@@ -6,7 +6,7 @@
       </div>
       <el-form-item label="帐号" style="line-height: 54px;">
         <el-col>
-          <el-input v-model="account" placeholder="请输入帐号" clearable required></el-input>
+          <el-input v-model="username" placeholder="请输入帐号" clearable required></el-input>
         </el-col>
       </el-form-item>
       <el-form-item label="密码" style="line-height: 54px;">
@@ -26,13 +26,34 @@ export default {
   name: 'App',
   data () {
     return {
-      account: '',
+      username: localStorage.getItem('admin_username'),
       password: '',
       header: 'Manage System'
     }
   },
   methods: {
-    onSubmit () { }
+    onSubmit () {
+      let params = new URLSearchParams()
+      params.append('username', this.username)
+      params.append('password', this.password)
+      this.$http.post(process.env.API_ROOT + '/api/admin/account/login', params).then(Response => {
+        if (Response.data.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '登录成功'
+          })
+          localStorage.setItem('admin_token', Response.data.data.token)
+          localStorage.setItem('admin_username', Response.data.data.username)
+          this.$router.replace('/admin/order')
+        } else {
+          localStorage.setItem('admin_token', '')
+          this.$message.error(Response.data.msg)
+        }
+      }).catch(Error => {
+        this.$message.error('网络出错, 请重新尝试')
+        console.log(Error)
+      })
+    }
   }
 }
 </script>

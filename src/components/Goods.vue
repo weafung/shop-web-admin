@@ -6,12 +6,12 @@
     <div class="box-card">
       <el-form :inline="true">
         <el-form-item label="单项查询" prop="searchContent">
-              <el-input :placeholder="`请输入${search.searchType.label}`" v-model="search.searchContent" class="search-content" maxlength="100">
-                <el-select v-model="search.searchType" slot="prepend" class="search-type" @change="handleSearchTypeChange">
-                  <el-option v-for="item in searchTypeOptions" :key="item.value" :label="item.label" :value="item"></el-option>
-                </el-select>
-              </el-input>
-            </el-form-item>
+          <el-input :placeholder="`请输入${search.searchType.label}`" v-model="search.searchContent" class="search-content" maxlength="100">
+            <el-select v-model="search.searchType" slot="prepend" class="search-type" @change="handleSearchTypeChange">
+              <el-option v-for="item in searchTypeOptions" :key="item.value" :label="item.label" :value="item"></el-option>
+            </el-select>
+          </el-input>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSearch">查询</el-button>
           <el-button type="primary" @click="handleReset">重置</el-button>
@@ -224,18 +224,24 @@ export default {
   methods: {
     fetchTableData () {
       this.$http.get(process.env.API_ROOT + '/api/admin/goods').then(Response => {
-        this.tableData = Response.data.data
+        if (Response.data.code === 200) {
+          this.tableData = Response.data.data
+        }
       })
     },
     fetchCategoryData () {
       this.$http.get(process.env.API_ROOT + '/api/admin/category').then(Response => {
-        let data = Response.data.data
-        this.categoriesData = data['children']
+        if (Response.data.code === 200) {
+          let data = Response.data.data
+          this.categoriesData = data['children']
+        }
       })
     },
     fetchSkuSpecData () {
       this.$http.get(process.env.API_ROOT + '/api/admin/sku').then(Response => {
-        this.skuSpecData = Response.data.data
+        if (Response.data.code === 200) {
+          this.skuSpecData = Response.data.data
+        }
       })
     },
     handleSearch () {
@@ -244,7 +250,9 @@ export default {
         params[this.search.searchType['value']] = this.search.searchContent
       }
       this.$http.get(process.env.API_ROOT + '/api/admin/goods', { params: params }).then(Response => {
-        this.tableData = Response.data.data
+        if (Response.data.code === 200) {
+          this.tableData = Response.data.data
+        }
       })
     },
     handleReset () {

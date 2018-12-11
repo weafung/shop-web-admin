@@ -12,6 +12,29 @@ import 'vue2-toast/lib/toast.css'
 import Toast from 'vue2-toast'
 
 Vue.use(Toast)
+
+axios.interceptors.request.use(
+  config => {
+    let token = localStorage.getItem('admin_token')
+    if (token) {
+      config.headers.Authorization = `${token}`
+    }
+    return config
+  },
+  error => Promise.reject(error)
+)
+axios.interceptors.response.use(
+  response => {
+    if (response.data.code === 1403) {
+      console.log('failed login')
+      router.replace('/login')
+    }
+    return response
+  },
+  error => {
+    return Promise.reject(error)
+  }
+)
 Vue.use(VueAxios, axios)
 
 Vue.config.productionTip = false

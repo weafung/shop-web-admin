@@ -3,7 +3,7 @@
     <el-header class="header">
       <span class="header-title">后台管理系统</span>
       <ul class="header-operations">
-        <!-- <li class="f-toe username" :title="username"><i class="iconfont icon-user"></i></li> -->
+        <li class="f-toe username" :title="username">欢迎您, {{username}}<i class="iconfont icon-user"></i></li>
         <li @click="logout">
           <i class="iconfont icon-exit"></i>退出</li>
       </ul>
@@ -74,13 +74,14 @@ export default {
   name: 'Admin',
   data () {
     return {
-      username: ''
+      username: localStorage.getItem('admin_username')
     }
   },
   // mixins: [ajax],
   methods: {
     logout () {
-      this.$router.push({ path: '/sign/login' })
+      localStorage.setItem('admin_token', '')
+      this.$router.push({ path: '/login' })
     }
   }
 }
