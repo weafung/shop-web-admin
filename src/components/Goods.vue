@@ -90,7 +90,8 @@
           <el-cascader :options="categoriesData" :props="goodsCascaderProps" v-model="editGoodsForm.categories"></el-cascader>
         </el-form-item>
         <el-form-item :label-width="'100px'" label="商品介绍">
-          <el-input type="textarea" :rows="10" v-model="editGoodsForm.data.introduce"></el-input>
+          <editor-bar v-model="editor.info" :isClear="isClear" @change="change"></editor-bar>
+          <!-- <el-input type="textarea" :rows="10" v-model="editGoodsForm.data.introduce"></el-input> -->
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -149,8 +150,11 @@
 </template>
 
 <script>
+import EditorBar from '@/components/EditorBar'
+
 export default {
   name: 'Goods',
+  components: { EditorBar },
   data () {
     let searchTypeOptions = [
       {
@@ -163,6 +167,10 @@ export default {
       }
     ]
     return {
+      editor: {
+        info: ''
+      },
+      isClear: false,
       attributeDoms: [],
       ele: 0,
       attributes: [],
@@ -222,6 +230,9 @@ export default {
     this.fetchSkuSpecData()
   },
   methods: {
+    change (val) {
+      this.editor.info1 = val
+    },
     fetchTableData () {
       this.$http.get(process.env.API_ROOT + '/api/admin/goods').then(Response => {
         if (Response.data.code === 200) {
@@ -283,6 +294,7 @@ export default {
         'data': row,
         'categories': [row.firstCategoryId, row.secondCategoryId, row.thirdCategoryId]
       }
+      this.editor.info = row.introduce
       this.editGoodsDialogFormVisible = true
     },
     handleSubmitOrEditGoods () {
@@ -296,7 +308,7 @@ export default {
       let params = {}
       let form = this.editGoodsForm
       params['title'] = form.data.title
-      params['introduce'] = form.data.introduce
+      params['introduce'] = this.editor.info1
       if (form.categories[0]) {
         params['firstCategoryId'] = form.categories[0]
       }
@@ -329,7 +341,7 @@ export default {
       let form = this.editGoodsForm
       params['goodsId'] = form.data.goodsId
       params['title'] = form.data.title
-      params['introduce'] = form.data.introduce
+      params['introduce'] = this.editor.info1
       if (form.categories[0]) {
         params['firstCategoryId'] = form.categories[0]
       }

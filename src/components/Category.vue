@@ -27,7 +27,7 @@
             <el-input v-model="form.rank" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item label="类目图标" :label-width="formLabelWidth">
-            <el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+            <el-upload class="avatar-uploader" :action="uploadImageUrl" :show-file-list="false" :before-upload="handleBeforeImageUpload" :on-success="handleImageUploadSuccess" :on-error="handleImageUploadError" :on-remove="handleImageRemove">
               <img v-if="form.imageUrl" :src="form.imageUrl" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -57,6 +57,7 @@ export default {
         categoryId: 0
       },
       formLabelWidth: '120px',
+      uploadImageUrl: process.env.UPLOAD_IMAGE_URL,
       isNewItem: false
     }
   },
@@ -170,20 +171,28 @@ export default {
         // })
       })
     },
-    handleAvatarSuccess (res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw)
-    },
-    beforeAvatarUpload (file) {
-      const isJPG = file.type === 'image/jpeg'
+
+    handleBeforeImageUpload (file) {
+      const isImage = file.type === 'image/jpeg' || file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
 
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+      if (!isImage) {
+        this.$message.error('上传图片只能是 JPG 或 PNG 格式')
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        this.$message.error('上传图片大小不能超过 2MB')
       }
-      return isJPG && isLt2M
+      return isImage && isLt2M
+    },
+    handleImageUploadError (err, file, fileList) {
+      this.$message.error('网络出错, 请重新尝试')
+      console.log(err)
+    },
+    handleImageUploadSuccess (res, file) {
+      this.form['imageUrl'] = res.data
+    },
+    handleImageRemove (file, fileList) {
+      this.form['imageUrl'] = ''
     }
   }
 }
