@@ -7,6 +7,14 @@
             <el-input :placeholder="`请输入内容`" v-model="config.service_phone" class="search-content" maxlength="100"> </el-input>
             <el-button type="primary" @click="handleSave('service_phone')">保存</el-button>
           </el-form-item>
+          <el-form-item label="默认限购">
+            <el-input :placeholder="`请输入内容`" v-model="config.limit_per_order" class="search-content" maxlength="100"> </el-input>
+            <el-button type="primary" @click="handleSave('limit_per_order')">保存</el-button>
+          </el-form-item>
+          <el-form-item label="用户协议">
+            <el-input :placeholder="`请输入内容`" v-model="config.user_contract" class="search-content" type="textarea" rows="20"> </el-input>
+            <el-button type="primary" @click="handleSave('user_contract')">保存</el-button>
+          </el-form-item>
         </el-form>
       </el-col>
     </el-row>
@@ -14,20 +22,31 @@
 </template>
 
 <script>
+import EditorBar from '@/components/EditorBar'
+
 export default {
+  components: { EditorBar },
+
   name: "Config",
   data () {
     return {
-      config: {}
+      config: {},
+      isClear: false
     };
   },
   mounted () {
     this.fetchData()
   },
   methods: {
+    change (val) {
+      this.config.user_contract = val
+    },
     fetchData () {
       let params = []
       params.push('service_phone')
+      params.push('limit_per_order')
+      params.push('user_contract')
+
       this.$http.post(process.env.API_ROOT + '/api/config/list', params).then(Response => {
         this.config = Response.data.data
         console.log(this.config)

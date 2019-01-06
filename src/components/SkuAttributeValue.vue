@@ -6,11 +6,11 @@
       </el-input>
     </div>
     <el-table :data="tableData.filter(data  => !search || data.attributeValueId.toString().toLowerCase().includes(search.toLowerCase()) || data.attributeValue.toLowerCase().includes(search.toLowerCase()) ||data.attributeName.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
-      <el-table-column prop="attributeValueId" label="SKU值ID">
+      <el-table-column prop="attributeValueId" label="规格值ID">
       </el-table-column>
-      <el-table-column prop="attributeName" label="SKU名">
+      <el-table-column prop="attributeName" label="规格名">
       </el-table-column>
-      <el-table-column prop="attributeValue" label="SKU值">
+      <el-table-column prop="attributeValue" label="规格值">
       </el-table-column>
       <el-table-column align="right" label="操作">
         <template slot-scope="scope">
@@ -41,7 +41,7 @@ export default {
       })
     },
     handleEdit (row) {
-      this.$prompt('请输入SKU名称', '提示', {
+      this.$prompt('请输入规格名称', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         inputPattern: /.{1,}/,

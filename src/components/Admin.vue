@@ -22,24 +22,24 @@
           <el-submenu index="/">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>SKU管理</span>
+              <span>规格管理</span>
             </template>
             <el-menu-item index="/admin/sku/attributeName">
               <i class="el-icon-star-on"></i>
-              <span slot="title"> SKU名管理 </span>
+              <span slot="title"> 规格名管理 </span>
             </el-menu-item>
             <el-menu-item index="/admin/sku/attributeValue">
               <i class="el-icon-star-on"></i>
-              <span slot="title"> SKU值管理 </span>
+              <span slot="title"> 规格值管理 </span>
             </el-menu-item>
           </el-submenu>
           <el-menu-item index="/admin/category">
             <i class="el-icon-star-on"></i>
             <span slot="title"> 类目管理 </span>
           </el-menu-item>
-          <el-menu-item index="/admin/shopOwner">
+          <el-menu-item index="/admin/user">
             <i class="el-icon-setting"></i>
-            <span slot="title"> 店主管理 </span>
+            <span slot="title"> 用户管理 </span>
           </el-menu-item>
           <el-menu-item index="/admin/setting">
             <i class="el-icon-setting"></i>

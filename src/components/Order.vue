@@ -44,7 +44,7 @@
           </el-form>
         </div>
         <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="gorderId" label="订单号">
+          <el-table-column prop="gorderId" label="订单号" width="140">
           </el-table-column>
           <el-table-column prop="name" label="收货人" width="80">
           </el-table-column>
@@ -56,8 +56,6 @@
             <template slot-scope="scope">
               <el-tag :type="tag[scope.row.status]" disable-transitions>{{statusOptions[scope.row.status + 1]['label']}}</el-tag>
             </template>
-          </el-table-column>
-          <el-table-column prop="packageCode" label="快递运单号">
           </el-table-column>
           <el-table-column prop="orderTime" label="下单时间">
             <template slot-scope="scope">
@@ -74,6 +72,12 @@
               {{timestampToDateTime(scope.row.packageTime)}}
             </template>
           </el-table-column>
+          <el-table-column prop="packageCode" label="快递运单号" width="140">
+            <template slot-scope="scope">
+              <el-button v-if="scope.row.status == 1" size="mini" @click="handlePackage(scope.row)">发货</el-button>
+              <span v-if="scope.row.status != 1" size="mini">{{scope.row.packageCode}}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="confirmTime" label="收货时间">
             <template slot-scope="scope">
               {{timestampToDateTime(scope.row.confirmTime)}}
@@ -82,7 +86,6 @@
           <el-table-column fixed="right" label="操作">
             <template slot-scope="scope">
               <el-button size="mini" @click="handleLook(scope.row)">详细</el-button>
-              <el-button v-if="scope.row.status == 1" size="mini" @click="handlePackage(scope.row)">发货</el-button>
               <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
             </template>
           </el-table-column>

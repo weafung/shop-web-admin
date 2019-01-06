@@ -89,6 +89,9 @@
         <el-form-item :label-width="'100px'" label="商品分类">
           <el-cascader :options="categoriesData" :props="goodsCascaderProps" v-model="editGoodsForm.categories"></el-cascader>
         </el-form-item>
+        <el-form-item :label-width="'100px'" label="每单限购">
+          <el-input v-model="editGoodsForm.data.limitPerOrder"></el-input>
+        </el-form-item>
         <el-form-item :label-width="'100px'" label="商品介绍">
           <editor-bar v-model="editor.info" :isClear="isClear" @change="change"></editor-bar>
           <!-- <el-input type="textarea" :rows="10" v-model="editGoodsForm.data.introduce"></el-input> -->
@@ -180,7 +183,8 @@ export default {
       editGoodsForm: {
         data: {
           'title': '',
-          'introduce': ''
+          'introduce': '',
+          'limitPerOrder': 100
         },
         categories: []
       },
@@ -285,6 +289,14 @@ export default {
     },
     // ===============================================================
     handleAddGoods () {
+      this.editGoodsForm = {
+        data: {
+          'title': '',
+          'introduce': '',
+          'limitPerOrder': 100
+        },
+        categories: []
+      }
       this.isNewGoods = true
       this.editGoodsDialogFormVisible = true
     },
@@ -309,6 +321,7 @@ export default {
       let form = this.editGoodsForm
       params['title'] = form.data.title
       params['introduce'] = this.editor.info1
+      params['limitPerOrder'] = form.data.limitPerOrder
       if (form.categories[0]) {
         params['firstCategoryId'] = form.categories[0]
       }
@@ -342,6 +355,7 @@ export default {
       params['goodsId'] = form.data.goodsId
       params['title'] = form.data.title
       params['introduce'] = this.editor.info1
+      params['limitPerOrder'] = form.data.limitPerOrder
       if (form.categories[0]) {
         params['firstCategoryId'] = form.categories[0]
       }

@@ -1,7 +1,7 @@
 <template>
   <div id="sku-attribute">
     <div class="block">
-      <el-tree :data="data" node-key="categoryId" :default-expanded-keys="[0]" highlight-current>
+      <el-tree :data="data" node-key="categoryId" default-expand-all highlight-current :expand-on-click-node="false">
         <span class="custom-tree-node" slot-scope="{ node, data }">
           <!-- <img :src="data.image" v-if="data.image != ''"/> -->
           <span>{{ data.title }}</span>
@@ -89,10 +89,13 @@ export default {
           })
           this.dialogFormVisible = false
           this.fetchData()
-          this.form['name'] = ''
-          this.form['rank'] = 0
-          this.form['parentId'] = 0
-          this.form['imageUrl'] = ''
+          this.form = {
+            parentId: 0,
+            imageUrl: '',
+            name: '',
+            rank: 0,
+            categoryId: 0
+          }
         }
       })
     },

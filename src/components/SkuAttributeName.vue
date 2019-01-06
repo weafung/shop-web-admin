@@ -9,11 +9,11 @@
     <el-table :data="tableData.filter(data  => !search || data.attributeNameId.toString().toLowerCase().includes(search.toLowerCase()) || data.attributeName.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
       <el-table-column prop="attributeNameId" label="ID">
       </el-table-column>
-      <el-table-column prop="attributeName" label="SKU名称">
+      <el-table-column prop="attributeName" label="规格名称">
       </el-table-column>
       <el-table-column fixed="right" label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleAddValue(scope.row)">添加SKU值</el-button>
+          <el-button size="mini" @click="handleAddValue(scope.row)">添加规格值</el-button>
           <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
         </template>
@@ -41,13 +41,13 @@ export default {
       })
     },
     add () {
-      this.$prompt('请输入SKU名称', '提示', {
+      this.$prompt('请输入规格名称', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         inputPattern: /.{1,}/,
         inputErrorMessage: '请输入文字'
       }).then(({ value }) => {
-        this.$http.post(process.env.API_ROOT + '/api/admin/sku/attributeName?name=' + value).then(Response => {
+        this.$http.post(process.env.API_ROOT + '/api/admin/sku/attributeName?attributeName=' + value).then(Response => {
           if (Response.data.code === 200) {
             this.$message({
               type: 'success',

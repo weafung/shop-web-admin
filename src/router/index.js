@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Admin from '@/components/Admin'
 import Setting from '@/components/Setting'
-import ShopOwner from '@/components/ShopOwner'
+import User from '@/components/User'
 import Goods from '@/components/Goods'
 import Login from '@/components/Login'
 import Forbidden from '@/components/error/403'
@@ -52,11 +52,11 @@ export default new Router({
         }
       },
       {
-        path: 'shopOwner',
-        name: 'ShopOwner',
-        component: ShopOwner,
+        path: 'user',
+        name: 'User',
+        component: User,
         meta: {
-          title: '店主管理'
+          title: '用户管理'
         }
       },
       {
